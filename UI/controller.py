@@ -7,12 +7,29 @@ class Controller:
         self._view = view
         # the model, which implements the logic of the program and holds the data
         self._model = model
+        self._fermataPartenza = None
+        self._fermataArrivo = None
 
     def handleCreaGrafo(self,e):
-        pass
+        self._model.buildGraph()
+        self._view.lst_result.controls.clear()
+        self._view.lst_result.controls.append(ft.Text("Grafo creato correttamente!", size=30, color="blue"))
+        self._view.lst_result.controls.append(ft.Text(f"Numero nodi: {self._model.getnumnodi()} | Numero archi: {self._model.getnumarchi()}"))
+        self._view.update_page()
 
     def handleCercaRaggiungibili(self,e):
-        pass
+        if self._fermataPartenza is None:
+            self._view.lst_result.controls.clear()
+            self._view.lst_result.controls.append(ft.Text("Attenzione! Inserire fermata di partenza.", color="red"))
+            self._view.update_page()
+            return
+        nodi = self._model.getBFSnodesFromEdges(self._fermataPartenza)
+        self._view.lst_result.controls.clear()
+        self._view.lst_result.controls.append(ft.Text(f"Data la fermata di partenza selezionata '{self._fermataPartenza.nome}', sono"
+                                                      f"stati trovati {len(nodi)} nodi:" , color="blue"))
+        for n in nodi:
+            self._view.lst_result.controls.append(ft.Text(n))
+        self._view.update_page()
 
     def loadFermate(self, dd: ft.Dropdown()):
         fermate = self._model.fermate
