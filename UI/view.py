@@ -38,9 +38,11 @@ class View(ft.UserControl):
 
         # Row with controls
         self._btnCrea = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handleCreaGrafo)
-        self._ddStazPartenza = ft.Dropdown(label="Stazione di Partenza")
-        self._ddStazArrivo = ft.Dropdown(label="Stazione di Arrivo")
-        self._btnCalcola = ft.ElevatedButton(text="Calcola Raggiungibili", on_click=self._controller.handleCercaRaggiungibili)
+        self._ddStazPartenza = ft.Dropdown(label="Stazione di Partenza", disabled=True)
+        self._ddStazArrivo = ft.Dropdown(label="Stazione di Arrivo", disabled=True)
+        self._btnCalcola = ft.ElevatedButton(text="Calcola Raggiungibili", on_click=self._controller.handleCercaRaggiungibili,
+                                             disabled=True)
+        self._btnTrovaPercorso = ft.ElevatedButton(text="Trova percorso", on_click=self._controller.handleTrovaPercorso)
 
 
         #Load elements in DD
@@ -51,7 +53,7 @@ class View(ft.UserControl):
         row2 = ft.Row([self._btnCrea,
                        self._ddStazPartenza,
                        self._ddStazArrivo,
-                       self._btnCalcola,
+                       self._btnCalcola, self._btnTrovaPercorso
                        ], alignment=ft.MainAxisAlignment.CENTER, spacing=30)
 
         # Row with listview

@@ -1,6 +1,13 @@
+import geopy.distance
 from database.DAO import DAO
 import networkx as nx
 from model.connessione import Connessione
+
+def getPeso(u, v, velocita):
+    distanza = geopy.distance.distance((u.coordX, u.coordY),(v.coordX, v.coordY)).km
+    tempo = distanza / velocita
+    return tempo*60
+
 
 class Model:
     def __init__(self):
@@ -21,7 +28,7 @@ class Model:
     def buildGraphPesato(self):
         self.grafo.clear()
         self.grafo.add_nodes_from(self._fermate)
-        self.addEdgesPesato1()
+        self.addEdgesPesatiTempi()
 
     def addEdgesPesato1(self): #alternativa farlo tranquillamente nel DAO
         #prendo spunto da addedges3
@@ -101,6 +108,20 @@ class Model:
         nodi = list(tree.nodes())
         return nodi
 
+    def addEdgesPesatiTempi(self):
+        #crea archi in cui il peso è pari al tempo di percorrenza di quell arco, ottenuto come rapporto tra  distanza tra 2 staz e
+        #e la velocità di percorrenza
+        self.grafo.clear_edges()
+        alledges = DAO.getAllEdgesVeloc()
+        for e in alledges:
+            u = self.idMapFermate[e[0]]
+            v = self.idMapFermate[e[1]]
+            velocita = e[2]
+            peso = getPeso(u, v , velocita) #tempo di percorrenza
+            self.grafo.add_edge(u, v, weight=peso)
+
+    def getPercorsoCorto(self, u, v):
+        return nx.single_source_dijkstra(self.grafo, u, v) #restituisce peso (tempo) + sequenza nodi del cammino minimo
 
     @property
     def fermate(self):

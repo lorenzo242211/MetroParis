@@ -68,5 +68,25 @@ class DAO():
             result.append(Connessione(**row))
         cursor.close()
         conn.close()
+        return result  # return true if > 0ù
+
+    @staticmethod
+    def getAllEdgesVeloc():
+        conn = DBConnect.get_connection()
+
+        result = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select c.id_stazP , c.id_stazA , max(l.velocita) as v
+            from connessione c, linea l
+            where l.id_linea = c.id_linea 
+            group by c.id_stazP , c.id_stazA 
+            order by v asc"""
+        cursor.execute(query)
+        #mi da tutte le 1500 connessioni direttamente
+        for row in cursor:
+            result.append((row['id_stazP'], row['id_stazA'], row['v']))
+        cursor.close()
+        conn.close()
         return result  # return true if > 0
 
